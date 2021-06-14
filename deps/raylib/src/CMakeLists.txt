@@ -1,7 +1,7 @@
 # Setup the project and settings
 project(raylib C)
-set(PROJECT_VERSION 3.7.0)
-set(API_VERSION 370)
+set(PROJECT_VERSION 3.5.0)
+set(API_VERSION 351)
 
 include(GNUInstallDirs)
 include(JoinPaths)
@@ -24,6 +24,7 @@ endif()
 set(raylib_public_headers
     raylib.h
     rlgl.h
+    physac.h
     raymath.h
     raudio.h
     )

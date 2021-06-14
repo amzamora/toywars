@@ -1,17 +1,22 @@
 /*******************************************************************************************
 *
-*   raylib [core] example - 3d camera first person
+*   raylib [core] example - quat conversions
 *
-*   This example has been created using raylib 1.3 (www.raylib.com)
+*   Generally you should really stick to eulers OR quats...
+*   This tests that various conversions are equivalent.
+*
+*   This example has been created using raylib 3.5 (www.raylib.com)
 *   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
 *
-*   Copyright (c) 2015 Ramon Santamaria (@raysan5)
+*   Example contributed by Chris Camacho (@chriscamacho) and reviewed by Ramon Santamaria (@raysan5)
+*
+*   Copyright (c) 2020 Chris Camacho (@chriscamacho) and Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
 
 #include "raylib.h"
 
-#define MAX_COLUMNS 20
+#include "raymath.h"
 
 int main(void)
 {
@@ -20,40 +25,56 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - 3d camera first person");
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - quat conversions");
 
-    // Define the camera to look into our 3d world (position, target, up vector)
-    Camera camera = { 0 };
-    camera.position = (Vector3){ 4.0f, 2.0f, 4.0f };
-    camera.target = (Vector3){ 0.0f, 1.8f, 0.0f };
-    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
-    camera.fovy = 60.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    Camera3D camera = { 0 };
+    camera.position = (Vector3){ 0.0f, 10.0f, 10.0f };  // Camera position
+    camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
+    camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
+    camera.fovy = 45.0f;                                // Camera field-of-view Y
+    camera.projection = CAMERA_PERSPECTIVE;                   // Camera mode type
 
-    // Generates some random columns
-    float heights[MAX_COLUMNS] = { 0 };
-    Vector3 positions[MAX_COLUMNS] = { 0 };
-    Color colors[MAX_COLUMNS] = { 0 };
+    Mesh mesh = GenMeshCylinder(0.2f, 1.0f, 32);
+    Model model = LoadModelFromMesh(mesh);
 
-    for (int i = 0; i < MAX_COLUMNS; i++)
-    {
-        heights[i] = (float)GetRandomValue(1, 12);
-        positions[i] = (Vector3){ (float)GetRandomValue(-15, 15), heights[i]/2.0f, (float)GetRandomValue(-15, 15) };
-        colors[i] = (Color){ GetRandomValue(20, 255), GetRandomValue(10, 55), 30, 255 };
-    }
+    // Some required variables
+    Quaternion q1 = { 0 };
+    Matrix m1 = { 0 }, m2 = { 0 }, m3 = { 0 }, m4 = { 0 };
+    Vector3 v1 = { 0 }, v2 = { 0 };
 
-    SetCameraMode(camera, CAMERA_FIRST_PERSON); // Set a first person camera mode
-
-    SetTargetFPS(60);                           // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
-    while (!WindowShouldClose())                // Detect window close button or ESC key
+    while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         // Update
-        //----------------------------------------------------------------------------------
-        UpdateCamera(&camera);                  // Update camera
-        //----------------------------------------------------------------------------------
+        //--------------------------------------------------------------------------------------
+        if (!IsKeyDown(KEY_SPACE))
+        {
+            v1.x += 0.01f;
+            v1.y += 0.03f;
+            v1.z += 0.05f;
+        }
+
+        if (v1.x > PI*2) v1.x -= PI*2;
+        if (v1.y > PI*2) v1.y -= PI*2;
+        if (v1.z > PI*2) v1.z -= PI*2;
+
+        q1 = QuaternionFromEuler(v1.x, v1.y, v1.z);
+        m1 = MatrixRotateZYX(v1);
+        m2 = QuaternionToMatrix(q1);
+
+        q1 = QuaternionFromMatrix(m1);
+        m3 = QuaternionToMatrix(q1);
+
+        v2 = QuaternionToEuler(q1);
+        v2.x *= DEG2RAD;
+        v2.y *= DEG2RAD;
+        v2.z *= DEG2RAD;
+
+        m4 = MatrixRotateZYX(v2);
+        //--------------------------------------------------------------------------------------
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -63,26 +84,36 @@ int main(void)
 
             BeginMode3D(camera);
 
-                DrawPlane((Vector3){ 0.0f, 0.0f, 0.0f }, (Vector2){ 32.0f, 32.0f }, LIGHTGRAY); // Draw ground
-                DrawCube((Vector3){ -16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, BLUE);     // Draw a blue wall
-                DrawCube((Vector3){ 16.0f, 2.5f, 0.0f }, 1.0f, 5.0f, 32.0f, LIME);      // Draw a green wall
-                DrawCube((Vector3){ 0.0f, 2.5f, 16.0f }, 32.0f, 5.0f, 1.0f, GOLD);      // Draw a yellow wall
+                model.transform = m1;
+                DrawModel(model, (Vector3){ -1, 0, 0 }, 1.0f, RED);
+                model.transform = m2;
+                DrawModel(model, (Vector3){ 1, 0, 0 }, 1.0f, RED);
+                model.transform = m3;
+                DrawModel(model, (Vector3){ 0, 0, 0 }, 1.0f, RED);
+                model.transform = m4;
+                DrawModel(model, (Vector3){ 0, 0, -1 }, 1.0f, RED);
 
-                // Draw some cubes around
-                for (int i = 0; i < MAX_COLUMNS; i++)
-                {
-                    DrawCube(positions[i], 2.0f, heights[i], 2.0f, colors[i]);
-                    DrawCubeWires(positions[i], 2.0f, heights[i], 2.0f, MAROON);
-                }
+                DrawGrid(10, 1.0f);
 
             EndMode3D();
 
-            DrawRectangle( 10, 10, 220, 70, Fade(SKYBLUE, 0.5f));
-            DrawRectangleLines( 10, 10, 220, 70, BLUE);
+            if (v2.x < 0) v2.x += PI*2;
+            if (v2.y < 0) v2.y += PI*2;
+            if (v2.z < 0) v2.z += PI*2;
 
-            DrawText("First person camera default controls:", 20, 20, 10, BLACK);
-            DrawText("- Move with keys: W, A, S, D", 40, 40, 10, DARKGRAY);
-            DrawText("- Mouse move to look around", 40, 60, 10, DARKGRAY);
+            Color cx,cy,cz;
+            cx = cy = cz = BLACK;
+            if (v1.x == v2.x) cx = GREEN;
+            if (v1.y == v2.y) cy = GREEN;
+            if (v1.z == v2.z) cz = GREEN;
+
+            DrawText(TextFormat("%2.3f", v1.x), 20, 20, 20, cx);
+            DrawText(TextFormat("%2.3f", v1.y), 20, 40, 20, cy);
+            DrawText(TextFormat("%2.3f", v1.z), 20, 60, 20, cz);
+
+            DrawText(TextFormat("%2.3f", v2.x), 200, 20, 20, cx);
+            DrawText(TextFormat("%2.3f", v2.y), 200, 40, 20, cy);
+            DrawText(TextFormat("%2.3f", v2.z), 200, 60, 20, cz);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -90,6 +121,8 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
+    UnloadModel(model);   // Unload model data (mesh and materials)
+
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 

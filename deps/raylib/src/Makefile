@@ -43,8 +43,8 @@
 .PHONY: all clean install uninstall
 
 # Define required raylib variables
-RAYLIB_VERSION        = 3.7.1
-RAYLIB_API_VERSION    = 371
+RAYLIB_VERSION        = 3.7.0
+RAYLIB_API_VERSION    = 370
 
 # Define raylib source code path
 RAYLIB_SRC_PATH      ?= ../src
@@ -77,7 +77,7 @@ RAYLIB_MODULE_RAYGUI ?= FALSE
 RAYLIB_MODULE_PHYSAC ?= FALSE
 
 RAYLIB_MODULE_RAYGUI_PATH ?= $(RAYLIB_SRC_PATH)/../../raygui/src
-RAYLIB_MODULE_PHYSAC_PATH ?= $(RAYLIB_SRC_PATH)/extras
+RAYLIB_MODULE_PHYSAC_PATH ?= $(RAYLIB_SRC_PATH)
 
 # Use external GLFW library instead of rglfw module
 # TODO: Review usage of examples on Linux.
@@ -650,7 +650,7 @@ ifeq ($(ROOT),root)
 		cp --update raylib.h $(RAYLIB_H_INSTALL_PATH)/raylib.h
 		cp --update raymath.h $(RAYLIB_H_INSTALL_PATH)/raymath.h
 		cp --update rlgl.h $(RAYLIB_H_INSTALL_PATH)/rlgl.h
-		cp --update extras/physac.h $(RAYLIB_H_INSTALL_PATH)/physac.h
+		cp --update physac.h $(RAYLIB_H_INSTALL_PATH)/physac.h
 		@echo "raylib development files installed/updated!"
     else
 		@echo "This function currently works on GNU/Linux systems. Add yours today (^;"

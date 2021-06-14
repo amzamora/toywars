@@ -848,14 +848,12 @@ void DrawText(const char *text, int posX, int posY, int fontSize, Color color)
 // NOTE: chars spacing is NOT proportional to fontSize
 void DrawTextEx(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color tint)
 {
-    if (font.texture.id == 0) font = GetFontDefault();  // Security check in case of not valid font
-
-    int length = TextLength(text);  // Total length in bytes of the text, scanned by codepoints in loop
+    int length = TextLength(text);      // Total length in bytes of the text, scanned by codepoints in loop
 
     int textOffsetY = 0;            // Offset between lines (on line break '\n')
     float textOffsetX = 0.0f;       // Offset X to next character to draw
 
-    float scaleFactor = fontSize/font.baseSize;         // Character quad scaling factor
+    float scaleFactor = fontSize/font.baseSize;     // Character quad scaling factor
 
     for (int i = 0; i < length;)
     {
@@ -1123,7 +1121,7 @@ Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing
     return vec;
 }
 
-// Get index position for a unicode character on spritefont
+// Returns index position for a unicode character on spritefont
 int GetGlyphIndex(Font font, int codepoint)
 {
 #ifndef GLYPH_NOTFOUND_CHAR_FALLBACK
@@ -1176,7 +1174,7 @@ const char *TextFormat(const char *text, ...)
 
     // We create an array of buffers so strings don't expire until MAX_TEXTFORMAT_BUFFERS invocations
     static char buffers[MAX_TEXTFORMAT_BUFFERS][MAX_TEXT_BUFFER_LENGTH] = { 0 };
-    static int index = 0;
+    static int  index = 0;
 
     char *currentBuffer = buffers[index];
     memset(currentBuffer, 0, MAX_TEXT_BUFFER_LENGTH);   // Clear buffer before using
@@ -1272,7 +1270,7 @@ const char *TextSubtext(const char *text, int position, int length)
 
 // Replace text string
 // REQUIRES: strstr(), strncpy(), strcpy()
-// WARNING: Returned buffer must be freed by the user (if return != NULL)
+// WARNING: Internally allocated memory must be freed by the user (if return != NULL)
 char *TextReplace(char *text, const char *replace, const char *by)
 {
     // Sanity checks and initialization
@@ -1297,14 +1295,14 @@ char *TextReplace(char *text, const char *replace, const char *by)
     for (count = 0; (temp = strstr(insertPoint, replace)); count++) insertPoint = temp + replaceLen;
 
     // Allocate returning string and point temp to it
-    temp = result = (char *)RL_MALLOC(TextLength(text) + (byLen - replaceLen)*count + 1);
+    temp = result = RL_MALLOC(TextLength(text) + (byLen - replaceLen)*count + 1);
 
     if (!result) return NULL;   // Memory could not be allocated
 
     // First time through the loop, all the variable are set correctly from here on,
-    //  - 'temp' points to the end of the result string
-    //  - 'insertPoint' points to the next occurrence of replace in text
-    //  - 'text' points to the remainder of text after "end of replace"
+    //    temp points to the end of the result string
+    //    insertPoint points to the next occurrence of replace in text
+    //    text points to the remainder of text after "end of replace"
     while (count--)
     {
         insertPoint = strstr(text, replace);
@@ -1325,7 +1323,7 @@ char *TextReplace(char *text, const char *replace, const char *by)
 char *TextInsert(const char *text, const char *insert, int position)
 {
     int textLen = TextLength(text);
-    int insertLen = TextLength(insert);
+    int insertLen =  TextLength(insert);
 
     char *result = (char *)RL_MALLOC(textLen + insertLen + 1);
 
@@ -1586,7 +1584,7 @@ int *GetCodepoints(const char *text, int *count)
     return codepoints;
 }
 
-// Get total number of characters(codepoints) in a UTF8 encoded text, until '\0' is found
+// Returns total number of characters(codepoints) in a UTF8 encoded text, until '\0' is found
 // NOTE: If an invalid UTF8 sequence is encountered a '?'(0x3f) codepoint is counted instead
 int GetCodepointsCount(const char *text)
 {
@@ -1608,7 +1606,7 @@ int GetCodepointsCount(const char *text)
 }
 #endif      // SUPPORT_TEXT_MANIPULATION
 
-// Get next codepoint in a UTF8 encoded text, scanning until '\0' is found
+// Returns next codepoint in a UTF8 encoded text, scanning until '\0' is found
 // When a invalid UTF8 byte is encountered we exit as soon as possible and a '?'(0x3f) codepoint is returned
 // Total number of bytes processed are returned as a parameter
 // NOTE: the standard says U+FFFD should be returned in case of errors
@@ -1865,7 +1863,7 @@ static Font LoadBMFont(const char *fileName)
     }
 
     UnloadImage(imFont);
-    UnloadFileText(fileText);
+    RL_FREE(fileText);
 
     if (font.texture.id == 0)
     {

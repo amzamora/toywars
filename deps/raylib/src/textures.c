@@ -67,7 +67,6 @@
 #include <stdlib.h>             // Required for: malloc(), free()
 #include <string.h>             // Required for: strlen() [Used in ImageTextEx()]
 #include <math.h>               // Required for: fabsf()
-#include <stdio.h>              // Required for: sprintf() [Used in ExportImageAsCode()]
 
 #include "utils.h"              // Required for: fopen() Android mapping
 
@@ -123,7 +122,7 @@
                                             // NOTE: Used to read image data (multiple formats support)
 #endif
 
-#if defined(SUPPORT_IMAGE_EXPORT)
+#if (defined(SUPPORT_IMAGE_EXPORT) || defined(SUPPORT_COMPRESSION_API))
     #define STBIW_MALLOC RL_MALLOC
     #define STBIW_FREE RL_FREE
     #define STBIW_REALLOC RL_REALLOC
@@ -417,15 +416,9 @@ bool ExportImage(Image image, const char *fileName)
     }
 
 #if defined(SUPPORT_FILEFORMAT_PNG)
-    if (IsFileExtension(fileName, ".png"))
-    {
-        int dataSize = 0;
-        unsigned char *fileData = stbi_write_png_to_mem((const unsigned char *)imgData, image.width*channels, image.width, image.height, channels, &dataSize);
-        success = SaveFileData(fileName, fileData, dataSize);
-        RL_FREE(fileData);
-    }
+    if (IsFileExtension(fileName, ".png")) success = stbi_write_png(fileName, image.width, image.height, channels, imgData, image.width*channels);
 #else
-    if (false) { }
+    if (false) {}
 #endif
 #if defined(SUPPORT_FILEFORMAT_BMP)
     else if (IsFileExtension(fileName, ".bmp")) success = stbi_write_bmp(fileName, image.width, image.height, channels, imgData);
@@ -459,8 +452,6 @@ bool ExportImage(Image image, const char *fileName)
 bool ExportImageAsCode(Image image, const char *fileName)
 {
     bool success = false;
-
-#if defined(SUPPORT_IMAGE_EXPORT)
 
 #ifndef TEXT_BYTES_PER_LINE
     #define TEXT_BYTES_PER_LINE     20
@@ -503,11 +494,6 @@ bool ExportImageAsCode(Image image, const char *fileName)
     success = SaveFileText(fileName, txtData);
 
     RL_FREE(txtData);
-
-#endif      // SUPPORT_IMAGE_EXPORT
-
-    if (success != 0) TRACELOG(LOG_INFO, "FILEIO: [%s] Image exported successfully", fileName);
-    else TRACELOG(LOG_WARNING, "FILEIO: [%s] Failed to export image", fileName);
 
     return success;
 }
@@ -1362,7 +1348,7 @@ void ImageResize(Image *image, int newWidth, int newHeight)
     if (fastPath)
     {
         int bytesPerPixel = GetPixelDataSize(1, 1, image->format);
-        unsigned char *output = (unsigned char *)RL_MALLOC(newWidth*newHeight*bytesPerPixel);
+        unsigned char *output = RL_MALLOC(newWidth*newHeight*bytesPerPixel);
 
         switch (image->format)
         {
@@ -2646,7 +2632,7 @@ void ImageDraw(Image *dst, Image src, Rectangle srcRec, Rectangle dstRec, Color 
         //    [x] Optimize ColorAlphaBlend() for faster operations (maybe avoiding divs?)
         //    [x] Consider fast path: no alpha blending required cases (src has no alpha)
         //    [x] Consider fast path: same src/dst format with no alpha -> direct line copy
-        //    [-] GetPixelColor(): Get Vector4 instead of Color, easier for ColorAlphaBlend()
+        //    [-] GetPixelColor(): Return Vector4 instead of Color, easier for ColorAlphaBlend()
 
         Color colSrc, colDst, blend;
         bool blendRequired = true;
@@ -3553,7 +3539,7 @@ void DrawTexturePoly(Texture2D texture, Vector2 center, Vector2 *points, Vector2
     rlSetTexture(0);
 }
 
-// Get color with alpha applied, alpha goes from 0.0f to 1.0f
+// Returns color with alpha applied, alpha goes from 0.0f to 1.0f
 Color Fade(Color color, float alpha)
 {
     if (alpha < 0.0f) alpha = 0.0f;
@@ -3562,13 +3548,13 @@ Color Fade(Color color, float alpha)
     return (Color){color.r, color.g, color.b, (unsigned char)(255.0f*alpha)};
 }
 
-// Get hexadecimal value for a Color
+// Returns hexadecimal value for a Color
 int ColorToInt(Color color)
 {
     return (((int)color.r << 24) | ((int)color.g << 16) | ((int)color.b << 8) | (int)color.a);
 }
 
-// Get color normalized as float [0..1]
+// Returns color normalized as float [0..1]
 Vector4 ColorNormalize(Color color)
 {
     Vector4 result;
@@ -3581,7 +3567,7 @@ Vector4 ColorNormalize(Color color)
     return result;
 }
 
-// Get color from normalized values [0..1]
+// Returns color from normalized values [0..1]
 Color ColorFromNormalized(Vector4 normalized)
 {
     Color result;
@@ -3594,7 +3580,7 @@ Color ColorFromNormalized(Vector4 normalized)
     return result;
 }
 
-// Get HSV values for a Color
+// Returns HSV values for a Color
 // NOTE: Hue is returned as degrees [0..360]
 Vector3 ColorToHSV(Color color)
 {
@@ -3646,7 +3632,7 @@ Vector3 ColorToHSV(Color color)
     return hsv;
 }
 
-// Get a Color from HSV values
+// Returns a Color from HSV values
 // Implementation reference: https://en.wikipedia.org/wiki/HSL_and_HSV#Alternative_HSV_conversion
 // NOTE: Color->HSV->Color conversion will not yield exactly the same color due to rounding errors
 // Hue is provided in degrees: [0..360]
@@ -3682,7 +3668,7 @@ Color ColorFromHSV(float hue, float saturation, float value)
     return color;
 }
 
-// Get color with alpha applied, alpha goes from 0.0f to 1.0f
+// Returns color with alpha applied, alpha goes from 0.0f to 1.0f
 Color ColorAlpha(Color color, float alpha)
 {
     if (alpha < 0.0f) alpha = 0.0f;
@@ -3691,7 +3677,7 @@ Color ColorAlpha(Color color, float alpha)
     return (Color){color.r, color.g, color.b, (unsigned char)(255.0f*alpha)};
 }
 
-// Get src alpha-blended into dst color with tint
+// Returns src alpha-blended into dst color with tint
 Color ColorAlphaBlend(Color dst, Color src, Color tint)
 {
     Color out = WHITE;
@@ -3746,7 +3732,7 @@ Color ColorAlphaBlend(Color dst, Color src, Color tint)
     return out;
 }
 
-// Get a Color struct from hexadecimal value
+// Returns a Color struct from hexadecimal value
 Color GetColor(int hexValue)
 {
     Color color;

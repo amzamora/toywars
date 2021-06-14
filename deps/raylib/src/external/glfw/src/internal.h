@@ -248,9 +248,6 @@ struct _GLFWinitconfig
         GLFWbool  menubar;
         GLFWbool  chdir;
     } ns;
-    struct {
-        GLFWbool  xcbVulkanSurface;
-    } x11;
 };
 
 // Window configuration
@@ -353,9 +350,9 @@ struct _GLFWcontext
     int                 robustness;
     int                 release;
 
-    PFNGLGETSTRINGIPROC  GetStringi;
+    PFNGLGETSTRINGIPROC GetStringi;
     PFNGLGETINTEGERVPROC GetIntegerv;
-    PFNGLGETSTRINGPROC   GetString;
+    PFNGLGETSTRINGPROC  GetString;
 
     _GLFWmakecontextcurrentfun  makeCurrent;
     _GLFWswapbuffersfun         swapBuffers;
@@ -387,7 +384,6 @@ struct _GLFWwindow
     GLFWbool            mousePassthrough;
     GLFWbool            shouldClose;
     void*               userPointer;
-    GLFWbool            doublebuffer;
     GLFWvidmode         videoMode;
     _GLFWmonitor*       monitor;
     _GLFWcursor*        cursor;
@@ -409,23 +405,23 @@ struct _GLFWwindow
     _GLFWcontext        context;
 
     struct {
-        GLFWwindowposfun          pos;
-        GLFWwindowsizefun         size;
-        GLFWwindowclosefun        close;
-        GLFWwindowrefreshfun      refresh;
-        GLFWwindowfocusfun        focus;
-        GLFWwindowiconifyfun      iconify;
-        GLFWwindowmaximizefun     maximize;
-        GLFWframebuffersizefun    fbsize;
+        GLFWwindowposfun        pos;
+        GLFWwindowsizefun       size;
+        GLFWwindowclosefun      close;
+        GLFWwindowrefreshfun    refresh;
+        GLFWwindowfocusfun      focus;
+        GLFWwindowiconifyfun    iconify;
+        GLFWwindowmaximizefun   maximize;
+        GLFWframebuffersizefun  fbsize;
         GLFWwindowcontentscalefun scale;
-        GLFWmousebuttonfun        mouseButton;
-        GLFWcursorposfun          cursorPos;
-        GLFWcursorenterfun        cursorEnter;
-        GLFWscrollfun             scroll;
-        GLFWkeyfun                key;
-        GLFWcharfun               character;
-        GLFWcharmodsfun           charmods;
-        GLFWdropfun               drop;
+        GLFWmousebuttonfun      mouseButton;
+        GLFWcursorposfun        cursorPos;
+        GLFWcursorenterfun      cursorEnter;
+        GLFWscrollfun           scroll;
+        GLFWkeyfun              key;
+        GLFWcharfun             character;
+        GLFWcharmodsfun         charmods;
+        GLFWdropfun             drop;
     } callbacks;
 
     // This is defined in the window API's platform.h
@@ -436,7 +432,7 @@ struct _GLFWwindow
 //
 struct _GLFWmonitor
 {
-    char            name[128];
+    char*           name;
     void*           userPointer;
 
     // Physical dimensions in millimeters.
@@ -497,7 +493,7 @@ struct _GLFWjoystick
     int             buttonCount;
     unsigned char*  hats;
     int             hatCount;
-    char            name[128];
+    char*           name;
     void*           userPointer;
     char            guid[33];
     _GLFWmapping*   mapping;

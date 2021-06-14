@@ -25,6 +25,8 @@
 *
 **********************************************************************************************/
 
+#define RAYLIB_VERSION  "3.7"
+
 //------------------------------------------------------------------------------------
 // Module: core - Configuration Flags
 //------------------------------------------------------------------------------------
@@ -43,8 +45,8 @@
 #define SUPPORT_WINMM_HIGHRES_TIMER 1
 // Use busy wait loop for timing sync, if not defined, a high-resolution timer is setup and used
 //#define SUPPORT_BUSY_WAIT_LOOP      1
-// Use a partial-busy wait loop, in this case frame sleeps for most of the time, but then runs a busy loop at the end for accuracy
-#define SUPPORT_PARTIALBUSY_WAIT_LOOP
+// Use a half-busy wait loop, in this case frame sleeps for some time and runs a busy-wait-loop at the end
+#define SUPPORT_HALFBUSY_WAIT_LOOP
 // Wait for events passively (sleeping while no events) instead of polling them actively every frame
 //#define SUPPORT_EVENTS_WAITING      1
 // Allow automatic screen capture of current screen pressing F12, defined in KeyCallback()
@@ -55,8 +57,6 @@
 #define SUPPORT_COMPRESSION_API     1
 // Support saving binary data automatically to a generated storage.data file. This file is managed internally.
 #define SUPPORT_DATA_STORAGE        1
-// Support automatic generated events, loading and recording of those events when required
-#define SUPPORT_EVENTS_AUTOMATION     1
 
 // core: Configuration values
 //------------------------------------------------------------------------------------

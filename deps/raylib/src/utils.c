@@ -155,7 +155,7 @@ void TraceLog(int logType, const char *text, ...)
 
     va_end(args);
 
-    if (logType == LOG_FATAL) exit(EXIT_FAILURE);  // If fatal logging, exit program
+    if (logType == LOG_ERROR) exit(1);  // If error, exit program
 
 #endif  // SUPPORT_TRACELOG
 }
@@ -325,7 +325,7 @@ char *LoadFileText(const char *fileName)
 }
 
 // Unload file text data allocated by LoadFileText()
-void UnloadFileText(char *text)
+void UnloadFileText(unsigned char *text)
 {
     RL_FREE(text);
 }
@@ -393,7 +393,7 @@ FILE *android_fopen(const char *fileName, const char *mode)
 
         if (asset != NULL)
         {
-            // Get pointer to file in the assets
+            // Return pointer to file in the assets
             return funopen(asset, android_read, android_write, android_seek, android_close);
         }
         else
