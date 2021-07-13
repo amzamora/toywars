@@ -3,10 +3,6 @@
 #include <cmath>
 #include <cassert>
 
-void Button::handle_input() {
-
-}
-
 void Button::update() {
 	if (this->state == BUTTON_RELEASED) {
 		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -57,4 +53,12 @@ void Button::draw() {
 	else {
 		assert(false);
 	}
+}
+
+void Card::update() {
+
+}
+
+void Card::draw() {
+	Game::instance().draw_sprite("tank", this->position, 3);
 }

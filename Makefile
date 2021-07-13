@@ -1,5 +1,5 @@
 NAME = toywars
-SRCS = src/main.cpp src/game.cpp src/screens/title_screen.cpp src/ui/ui.cpp
+SRCS = src/main.cpp src/game.cpp src/screens/title_screen.cpp src/screens/army_building_screen.cpp src/ui/ui.cpp
 FLAGS = -Wall -Wextra -Werror
 
 all: $(SRCS) deps/raylib/build/raylib/libraylib.a

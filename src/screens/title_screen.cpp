@@ -2,7 +2,9 @@
 #include "../ui/ui.hpp"
 
 TitleScreen::TitleScreen() {
-	this->nodes.push_back(std::make_shared<Button>("PLAY", game::Position(0, 0), 180, 80));
+	this->nodes.push_back(std::make_shared<Button>("PLAY", game::Position(0, 0), 180, 80, []() {
+		Game::instance().current_screen = "army_building_screen";
+	}));
 	this->nodes.push_back(std::make_shared<Button>("QUIT", game::Position(0, - 80 - 20), 180, 80, []() {
 		Game::instance().running = false;
 	}));
