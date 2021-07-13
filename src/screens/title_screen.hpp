@@ -9,7 +9,6 @@ struct TitleScreen : game::Node {
 
 	TitleScreen();
 	~TitleScreen() {}
-	virtual void handle_input();
 	virtual void update();
 	virtual void draw();
 };

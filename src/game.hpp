@@ -34,9 +34,9 @@ public:
 	bool running;
 	std::string current_screen;
 	std::unordered_map<std::string, std::shared_ptr<game::Node>> screens;
-	Font fonts[1];
+	std::unordered_map<std::string, Font> fonts;
+	std::unordered_map<std::string, Sound> sound_effects;
 
-	void handle_input();
 	void update();
 	void draw();
 
