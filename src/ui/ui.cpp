@@ -21,6 +21,12 @@ void Button::update() {
 	else if (this->state == BUTTON_PRESSED) {
 		if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
 			this->state = BUTTON_RELEASED;
+
+			Vector2 mouse_pos = GetMousePosition();
+			game::Position pos = Game::instance().from_ui_coordinates_to_screen(this->position);
+			if (fabs(mouse_pos.x - pos.x) <= this->width / 2.0f && fabs(mouse_pos.y - pos.y) <= this->height / 2.0f) {
+				this->on_click();
+			}
 		}
 	}
 }
