@@ -2,7 +2,7 @@
 #include "../ui/ui.hpp"
 
 ArmyBuildingScreen::ArmyBuildingScreen() {
-	this->nodes.push_back(std::make_shared<Card>("", game::Position(0, 0)));
+	this->nodes.push_back(std::make_shared<Card>("", 0, 0));
 }
 
 void ArmyBuildingScreen::update() {

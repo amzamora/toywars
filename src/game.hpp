@@ -14,14 +14,6 @@ namespace game {
 		virtual void draw() {}
 		virtual ~Node() {}
 	};
-
-	struct Position {
-		float x;
-		float y;
-
-		Position(float x, float y) : x(x), y(y) {}
-		~Position() {}
-	};
 }
 
 class Game {
@@ -43,8 +35,10 @@ public:
 	void update();
 	void draw();
 
-	game::Position from_ui_coordinates_to_screen(game::Position position);
-	void draw_sprite(std::string id, game::Position position, float scale = 1.0f);
+	Vector2 to_screen_coordinates(Vector2 position);
+	void draw_rectangle(float x, float y, float width, float height, Color color);
+	void draw_text(Font font, std::string label, float x, float y, float font_size, float spacing, Color color);
+	void draw_sprite(std::string id, Vector2 position, float scale = 1.0f);
 
 private:
 	Game();

@@ -36,13 +36,26 @@ Game::~Game() {
 
 }
 
-game::Position Game::from_ui_coordinates_to_screen(game::Position position) {
+Vector2 Game::to_screen_coordinates(Vector2 position) {
 	float center_x = GetScreenWidth() / 2.0f;
 	float center_y = GetScreenHeight() / 2.0f;
-	return game::Position(center_x + position.x, center_y - position.y);
+	return {center_x + position.x, center_y - position.y};
 }
 
-void Game::draw_sprite(std::string id, game::Position position, float scale) {
+void Game::draw_rectangle(float x, float y, float width, float height, Color color) {
+	auto pos = this->to_screen_coordinates({x, y});
+	DrawRectangle(pos.x - width / 2.0f, pos.y - height / 2.0f, width, height, color);
+}
+
+void Game::draw_text(Font font, std::string label, float x, float y, float font_size, float spacing, Color color) {
+	auto pos = this->to_screen_coordinates({x, y});
+	Vector2 text_dimensions = MeasureTextEx(Game::instance().fonts["romulus"], label.c_str(), font_size, spacing);
+	float text_width = text_dimensions.x;
+	float text_height = text_dimensions.y;
+	DrawTextEx(font, label.c_str(), {pos.x - text_width / 2.0f - 6, pos.y - text_height / 2.0f}, font_size, spacing, color);
+}
+
+void Game::draw_sprite(std::string id, Vector2 position, float scale) {
 	auto sprite = this->sprites[id];
 	Texture2D texture = this->textures[sprite.first];
 	int index = sprite.second;
@@ -54,7 +67,7 @@ void Game::draw_sprite(std::string id, game::Position position, float scale) {
 	int clip_y = (index % rows) * sprite_size;
 	Rectangle src = {(float)clip_x, (float)clip_y, (float)sprite_size, (float)sprite_size};
 
-	auto pos = this->from_ui_coordinates_to_screen(position);
+	auto pos = this->to_screen_coordinates(position);
 	pos.x = pos.x - (sprite_size * scale) / 2.0f;
 	pos.y = pos.y - (sprite_size * scale) / 2.0f;
 	Rectangle dst = {pos.x, pos.y, (sprite_size * scale) , (sprite_size * scale)};
