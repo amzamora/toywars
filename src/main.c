@@ -1,4 +1,4 @@
-#include "game.hpp"
+#include "game.h"
 
 int main() {
 	// Create window
@@ -9,10 +9,12 @@ int main() {
 	InitAudioDevice();
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
+	// Initilize game
+
+
 	// Main game loop
-	while (!WindowShouldClose() && Game::instance().running) {
-		Game::instance().update();
-		Game::instance().draw();
+	while (!WindowShouldClose()) {
+		draw_game(game);
 	}
 
 	// Close window
