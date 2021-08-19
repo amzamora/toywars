@@ -134,8 +134,10 @@ bool string_equal_with_cons(char *str, int from, int to, const char *to_compare)
 }
 
 
-void delete_string(char *str) {
-    size_t* ptr = ((size_t*)str) - 2;
-    free(ptr);
-    ptr = NULL;
+void delete_string(char **str) {
+    if (*str) {
+        size_t* ptr = ((size_t*)(*str)) - 2;
+        free(ptr);
+        *str = NULL;
+    }
 }

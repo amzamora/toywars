@@ -10,12 +10,15 @@ int main() {
 	SetConfigFlags(FLAG_MSAA_4X_HINT);
 
 	// Initilize game
-
+	init_game();
 
 	// Main game loop
 	while (!WindowShouldClose()) {
-		draw_game(game);
+		update_game();
+		draw_game();
 	}
+
+	close_game();
 
 	// Close window
 	CloseWindow();

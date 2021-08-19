@@ -134,9 +134,11 @@ typedef enum {
 			_delete_hashmap_item(hashmap, i);        \
 		}                                            \
 	}                                                \
-	free(hashmap->buckets);                          \
-	free(hashmap);                                   \
-	hashmap = NULL;                                  \
+	if (hashmap) {                                   \
+		free(hashmap->buckets);                      \
+		free(hashmap);                               \
+		hashmap = NULL;                              \
+	}                                                \
 } while (false)
 
 #define _delete_hashmap_item(hashmap, index) do { \
@@ -183,8 +185,8 @@ static int _hash(const char* str, const int a, const int m) {
 }
 
 static int _get_hash(const char* str, const int num_buckets, const int attempt) {
-	const int hash_a = _hash(str, 3, num_buckets);
-	const int hash_b = _hash(str, 7, num_buckets);
+	const int hash_a = _hash(str, 547, num_buckets);
+	const int hash_b = _hash(str, 1607, num_buckets);
 	return (hash_a + (attempt * (hash_b + 1))) % num_buckets;
 }
 

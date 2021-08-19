@@ -17,6 +17,7 @@ void append_char(char **str, char c);
 void append_string(char **str, const char *string);
 int erase_string_from_to(char **str, int begin, int end);
 bool string_equal_with_cons(char *str, int from, int to, const char *to_compare);
+void delete_string(char **str);
 
 
 #endif
