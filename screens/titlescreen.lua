@@ -9,7 +9,7 @@ table.insert(nodes, ui.makeButton(
 	180, 80,
 	"PLAY",
 	function()
-		loadScreen("playscreen")
+		loadScreen("armybuildingscreen")
 	end)
 )
 table.insert(nodes, ui.makeButton(

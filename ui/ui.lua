@@ -65,4 +65,38 @@ function ui.makeButton(x, y, width, height, label, onclick)
 	return button
 end
 
+function ui.makeCard(x, y, image)
+	local node = {}
+	node.x = x
+	node.y = y
+	node.image = image
+	node.player = player
+	node.tank = {}
+	node.tank.attack = 1
+	node.tank.life = 1
+	node.tank.range = 1
+	node.tank.speed = 1
+
+	node.children = {}
+
+	node.update = function(dt)
+	end
+
+	local width = 128
+	local height = 225
+	node.draw = function()
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.rectangle("line", x - width / 2.0, y - height / 2.0, width, height)
+
+		local quad = getQuad("tank")
+		love.graphics.setColor(1, 1, 1)
+		love.graphics.draw(atlas, quad, x - width / 2.0 + 8, y - height / 2.0, 0.0, 3.5, 3.5)
+
+		love.graphics.setColor(0, 0, 0)
+		love.graphics.line(x - width / 2.0, y, x + width / 2.0, y)
+	end
+
+	return node
+end
+
 return ui

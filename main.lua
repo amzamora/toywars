@@ -1,6 +1,7 @@
 screens = {}
 screens["titlescreen"] = require("screens.titlescreen")
 screens["playscreen"] = require("screens.playscreen")
+screens["armybuildingscreen"] = require("screens.armybuildingscreen")
 
 soundEffects = {}
 soundEffects["button_click"] = love.audio.newSource("sounds/button_click.wav", "static")
@@ -8,6 +9,9 @@ soundEffects["button_click2"] = love.audio.newSource("sounds/button_click2.wav",
 
 fonts = {}
 fonts["Romulus"] = love.graphics.newFont("fonts/Romulus.ttf", 48)
+
+atlas = love.graphics.newImage("sprites/atlas.png")
+atlas:setFilter("linear", "nearest")
 
 function love.load()
 	love.window.setMode(800, 600)
@@ -39,4 +43,13 @@ end
 function loadScreen(screen)
 	currentScreen = screen
 	pcall(screens[currentScreen].load)
+end
+
+function getQuad(sprite)
+	if sprite == "tank" then
+		return love.graphics.newQuad(0, 0, 32, 32, image:getWidth(), image:getHeight())
+	end
+	if sprite == "city" then
+		return love.graphics.newQuad(0, 32, 32, 32, image:getWidth(), image:getHeight())
+	end
 end
