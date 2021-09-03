@@ -9,7 +9,7 @@ function screen.load()
 	image:setFilter("linear", "nearest")
 
 	nodes = {}
-	table.insert(nodes, ui.makeCard(120, love.graphics.getHeight() / 2.0, "tank"))
+	table.insert(nodes, ui.makeCard(0.0, 0.0, "tank"))
 end
 
 function screen.update(dt)

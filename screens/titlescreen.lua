@@ -2,25 +2,14 @@ local screen = {}
 screen.callbacks = {}
 
 local ui = require("ui.ui")
-local nodes = {}
-table.insert(nodes, ui.makeButton(
-	love.graphics.getWidth() / 2.0,
-	love.graphics.getHeight() / 2.0,
-	180, 80,
-	"PLAY",
-	function()
-		loadScreen("armybuildingscreen")
-	end)
-)
-table.insert(nodes, ui.makeButton(
-	love.graphics.getWidth() / 2.0,
-	love.graphics.getHeight() / 2.0 + 110,
-	180,
-	80,
-	"QUIT")
-)
+local nodes
 
 function screen.load()
+	nodes = {}
+	table.insert(nodes, ui.Button(0, 0, 180, 80, "PLAY", function()
+			loadScreen("armybuildingscreen")
+		end))
+	table.insert(nodes, ui.Button(0, -110, 180, 80,"QUIT"))
 end
 
 function screen.update(dt)
