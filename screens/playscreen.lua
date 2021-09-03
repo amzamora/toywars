@@ -1,5 +1,4 @@
 local screen = {}
-screen.callbacks = {}
 
 local image
 local camera

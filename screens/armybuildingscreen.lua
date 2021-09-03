@@ -1,27 +1,20 @@
 local screen = {}
-screen.callbacks = {}
+screen.children = {}
 
 local ui = require("ui.ui")
-local nodes
 
 function screen.load()
 	image = love.graphics.newImage("sprites/atlas.png")
 	image:setFilter("linear", "nearest")
 
-	nodes = {}
-	table.insert(nodes, ui.makeCard(0.0, 0.0, "tank"))
+	screen.children = {}
+	table.insert(screen.children, ui.makeCard(-100, 0.0, "tank"))
 end
 
 function screen.update(dt)
-	for _, node in ipairs(nodes) do
-		node.update(dt)
-	end
 end
 
 function screen.draw()
-	for i, node in ipairs(nodes) do
-		node.draw()
-	end
 end
 
 return screen

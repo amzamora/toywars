@@ -31,7 +31,7 @@ function love.load()
 end
 
 function love.update(dt)
-	screens[currentScreen].update(dt)
+	traverseAndCall("update", {dt}, screens[currentScreen])
 end
 
 function love.draw()
@@ -40,16 +40,32 @@ function love.draw()
 	love.graphics.setBackgroundColor(1, 1, 1)
 	love.graphics.setColor(0, 0, 0)
 
-	-- Call draw
-	screens[currentScreen].draw()
+	traverseAndCall("draw", {}, screens[currentScreen])
 end
 
-function love.mousepressed(x, y, button, istouch, presses)
-	pcall(screens[currentScreen].mousepressed, x, y, button, istouch, presses)
+function love.mousepressed(x, y, button, isTouch)
+	traverseAndCall("mousepressed", {x, y, button, isTouch}, screens[currentScreen])
 end
 
 function love.mousereleased(x, y, button, isTouch)
-	pcall(screens[currentScreen].mousereleased, x, y, button, istouch)
+	traverseAndCall("mousereleased", {x, y, button, isTouch}, screens[currentScreen])
+end
+
+function traverseAndCall(method, args, node)
+	if node ~= nil then
+		if node.children ~= nil then
+			for _, child in ipairs(node.children) do
+				traverseAndCall(method, args, child)
+			end
+		end
+		if node[method] ~= nil then
+			if args[1] ~= nil then
+				node[method](unpack(args))
+			else
+				node[method]()
+			end
+		end
+	end
 end
 
 function loadScreen(screen)
