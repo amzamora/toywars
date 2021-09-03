@@ -5,7 +5,7 @@ local ui = require("ui.ui")
 local nodes = {}
 table.insert(nodes, ui.makeButton(
 	love.graphics.getWidth() / 2.0,
-	love.graphics.getHeight() / 2.0 - 100,
+	love.graphics.getHeight() / 2.0,
 	180, 80,
 	"PLAY",
 	function()
@@ -14,7 +14,7 @@ table.insert(nodes, ui.makeButton(
 )
 table.insert(nodes, ui.makeButton(
 	love.graphics.getWidth() / 2.0,
-	love.graphics.getHeight() / 2.0 + 10,
+	love.graphics.getHeight() / 2.0 + 110,
 	180,
 	80,
 	"QUIT")

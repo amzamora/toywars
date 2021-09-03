@@ -10,7 +10,7 @@ fonts = {}
 fonts["Romulus"] = love.graphics.newFont("fonts/Romulus.ttf", 48)
 
 function love.load()
-	love.window.setMode(800, 450)
+	love.window.setMode(800, 600)
 	loadScreen("titlescreen")
 end
 
