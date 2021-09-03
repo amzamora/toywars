@@ -1,6 +1,6 @@
 local ui = {}
 
-function ui.Button(x, y, width, height, label, onclick)
+function ui.Button(parent, x, y, width, height, label, onclick)
 	local released = 1
 	local pressed = 2
 
@@ -11,32 +11,36 @@ function ui.Button(x, y, width, height, label, onclick)
 	node.height = height
 	node.label = label
 	node.state = released
+	node.parent = parent
 
 	node.draw = function()
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+
 		if node.state == released then
 			love.graphics.setColor(0, 0, 0)
-			drawRectangle("fill", node.x, node.y, node.width, node.height)
+			drawRectangle("fill", pos.x, pos.y, node.width, node.height)
 
 			love.graphics.setColor(0.7, 0.7, 0.7)
-			drawRectangle("fill", node.x, node.y - node.height / 2.0, width, 8)
+			drawRectangle("fill", pos.x, pos.y - node.height / 2.0, width, 8)
 
 			love.graphics.setColor(1, 1, 1)
-			drawText(fonts["Romulus"], node.label, node.x, node.y)
+			drawText(fonts["Romulus"], node.label, pos.x, pos.y)
 
 		else
 			love.graphics.setColor(0, 0, 0)
-			drawRectangle("fill", node.x, node.y - 8, node.width, node.height)
+			drawRectangle("fill", pos.x, pos.y - 8, node.width, node.height)
 
 			love.graphics.setColor(0.7, 0.7, 0.7)
-			drawRectangle("fill", node.x, node.y + node.height / 2.0 - 4, node.width, 8)
+			drawRectangle("fill", pos.x, pos.y + node.height / 2.0 - 4, node.width, 8)
 
 			love.graphics.setColor(1, 1, 1)
-			drawText(fonts["Romulus"], node.label, node.x, node.y - 8)
+			drawText(fonts["Romulus"], node.label, pos.x, pos.y - 8)
 		end
 	end
 
 	node.mousepressed = function(x, y, mouseButton, istouch, presses)
-		local pos = toScreenCoordinates(node.x, node.y)
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+		pos = toScreenCoordinates(pos.x, pos.y)
 
 		if mouseButton == 1
 		and math.abs(x - pos.x) <= node.width / 2.0
@@ -47,7 +51,8 @@ function ui.Button(x, y, width, height, label, onclick)
 	end
 
 	node.mousereleased = function(x, y, mouseButton, istouch)
-		local pos = toScreenCoordinates(node.x, node.y)
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+		pos = toScreenCoordinates(pos.x, pos.y)
 
 		if mouseButton == 1
 		and node.state == pressed then
@@ -64,7 +69,7 @@ function ui.Button(x, y, width, height, label, onclick)
 	return node
 end
 
-function ui.RoundButton(x, y, radius, label, onclick)
+function ui.RoundButton(parent, x, y, radius, label, onclick)
 	local released = 1
 	local pressed = 2
 
@@ -74,26 +79,30 @@ function ui.RoundButton(x, y, radius, label, onclick)
 	node.radius = radius
 	node.label = label
 	node.state = released
+	node.parent = parent
 
 	node.draw = function()
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+
 		if node.state == released then
 			love.graphics.setColor(0, 0, 0)
-			drawCircle("fill", node.x, node.y, node.radius)
+			drawCircle("fill", pos.x, pos.y, node.radius)
 
 			love.graphics.setColor(1, 1, 1)
-			drawText(fonts["Romulus"], node.label, node.x + 2, node.y - 2)
+			drawText(love.graphics.newFont(36), node.label, pos.x, pos.y + 2)
 
 		else
 			love.graphics.setColor(0.8, 0.8, 0.8)
-			drawCircle("fill", node.x, node.y, node.radius)
+			drawCircle("fill", pos.x, pos.y, node.radius)
 
 			love.graphics.setColor(1, 1, 1)
-			drawText(fonts["Romulus"], node.label, node.x + 2, node.y - 2)
+			drawText(love.graphics.newFont(36), node.label, pos.x, pos.y + 2)
 		end
 	end
 
 	node.mousepressed = function(x, y, mouseButton, istouch, presses)
-		local pos = toScreenCoordinates(node.x, node.y)
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+		pos = toScreenCoordinates(pos.x, pos.y)
 
 		if mouseButton == 1
 		and distanceBetween(pos.x, pos.y, x, y) <= node.radius then
@@ -103,7 +112,8 @@ function ui.RoundButton(x, y, radius, label, onclick)
 	end
 
 	node.mousereleased = function(x, y, mouseButton, istouch)
-		local pos = toScreenCoordinates(node.x, node.y)
+		local pos = nodeToGlobalPos(node, node.x, node.y)
+		pos = toScreenCoordinates(pos.x, pos.y)
 
 		if mouseButton == 1
 		and node.state == pressed then
@@ -120,7 +130,7 @@ function ui.RoundButton(x, y, radius, label, onclick)
 end
 
 
-function ui.makeCard(x, y, image)
+function ui.makeCard(parent, x, y, image)
 	local node = {}
 	node.x = x
 	node.y = y
@@ -131,25 +141,27 @@ function ui.makeCard(x, y, image)
 	node.tank.life = 1
 	node.tank.range = 1
 	node.tank.speed = 1
+	node.parent = parent
+	local width = 128
+	local height = 256
 
 	node.children = {}
-	table.insert(node.children, ui.RoundButton(0, 0, 20, "X"))
+	table.insert(node.children, ui.RoundButton(node, -width / 2.0, height / 2.0, 20, "x"))
 
 	node.update = function(dt)
 	end
 
-	local width = 128
-	local height = 256
 	node.draw = function()
+		local pos = nodeToGlobalPos(node, node.x, node.y)
 		love.graphics.setColor(0, 0, 0)
-		drawRectangle("line", node.x, node.y, width, height)
+		drawRectangle("line", pos.x, pos.y, width, height)
 
 		love.graphics.setColor(1, 1, 1)
 		local spriteWidth = width - 20
-		drawSprite("tank", node.x, node.y + width /2.0, spriteWidth, spriteWidth)
+		drawSprite("tank", pos.x, pos.y + width /2.0, spriteWidth, spriteWidth)
 
 		love.graphics.setColor(0, 0, 0)
-		drawLine(x - width / 2.0, y, x + width / 2.0, y)
+		drawLine(pos.x - width / 2.0, pos.y, pos.x + width / 2.0, pos.y)
 
 		for i, node in ipairs(node.children) do
 			node.draw()

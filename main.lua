@@ -80,6 +80,16 @@ function toScreenCoordinates(x, y)
 	return pos
 end
 
+function nodeToGlobalPos(node, x, y)
+	if node.parent ~= nil
+	and node.parent.x ~= nil
+	and node.parent.y ~= nil then
+		return nodeToGlobalPos(node.parent, x + node.parent.x, y + node.parent.y)
+	else
+		return {x = x, y = y}
+	end
+end
+
 function drawRectangle(mode, x, y, width, height)
 	local pos = toScreenCoordinates(x, y)
 	love.graphics.rectangle(mode, pos.x - width / 2.0, pos.y - height / 2.0, width, height)

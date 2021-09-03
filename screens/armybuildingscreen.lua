@@ -8,7 +8,7 @@ function screen.load()
 	image:setFilter("linear", "nearest")
 
 	screen.children = {}
-	table.insert(screen.children, ui.makeCard(-100, 0.0, "tank"))
+	table.insert(screen.children, ui.makeCard(screen, -100, 0, "tank"))
 end
 
 function screen.update(dt)
