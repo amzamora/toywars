@@ -130,7 +130,7 @@ function ui.RoundButton(parent, x, y, radius, label, onclick)
 end
 
 
-function ui.makeCard(parent, x, y, image)
+function ui.Card(parent, x, y, image)
 	local node = {}
 	node.x = x
 	node.y = y
@@ -158,7 +158,7 @@ function ui.makeCard(parent, x, y, image)
 
 		love.graphics.setColor(1, 1, 1)
 		local spriteWidth = width - 20
-		drawSprite("tank", pos.x, pos.y + width /2.0, spriteWidth, spriteWidth)
+		drawSprite("tank", pos.x, pos.y + width / 2.0, spriteWidth, spriteWidth)
 
 		love.graphics.setColor(0, 0, 0)
 		drawLine(pos.x - width / 2.0, pos.y, pos.x + width / 2.0, pos.y)
