@@ -69,6 +69,11 @@ function drawRectangle(mode, x, y, width, height)
 	love.graphics.rectangle(mode, pos.x - width / 2.0, pos.y - height / 2.0, width, height)
 end
 
+function drawCircle(mode, x, y, radius)
+	local pos = toScreenCoordinates(x, y)
+	love.graphics.circle(mode, pos.x, pos.y, radius)
+end
+
 function drawText(font, text, x, y)
 	local pos = toScreenCoordinates(x, y)
 	local text = love.graphics.newText(font, text)
@@ -94,11 +99,6 @@ function drawSprite(spriteName, x, y, width, height)
 	love.graphics.draw(sprite.texture, quad, pos.x - (scale.x * spriteSize) / 2.0, pos.y - (scale.y * spriteSize) / 2.0, 0, scale.x, scale.y)
 end
 
-function getQuad(sprite)
-	if sprite == "tank" then
-		return love.graphics.newQuad(0, 0, 32, 32, image:getWidth(), image:getHeight())
-	end
-	if sprite == "city" then
-		return love.graphics.newQuad(0, 32, 32, 32, image:getWidth(), image:getHeight())
-	end
+function distanceBetween(x, y, x2, y2)
+	return math.sqrt((x - x2)^2 + (y - y2)^2)
 end
